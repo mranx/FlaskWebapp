@@ -1,0 +1,32 @@
+<!-- templates/reverse_search_result.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .results {
+            margin-top: 20px;
+        }
+        .character {
+            display: inline-block;
+            padding: 15px 20px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            min-width: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="results">
+        <h2>Reverse Search Results</h2>
+
+        {% for row in return_data %}
+            {% for char in row %}
+                <span class="character">{{ char }}</span>
+            {% endfor %}
+        {% endfor %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Character Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .main-container {
+        margin: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Changed to 1fr 1fr for 50-50 split */
+            gap: 20px;
+        }
+
+        .search-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: end;
+        }
+
+        .search-container {
+            align-items: end;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .input-div {
+            width: 100%;
+            position: relative;
+            flex-grow: 1;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            padding-right: 40px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        .usage {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            height: fit-content;
+                border: 1px solid #ddd;
+        }
+
+        .usage h3 {
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .usage h4 {
+            margin: 10px 0 5px 0;
+        }
+
+        .usage p {
+            margin: 5px 0;
+        }
+
+        #results {
+            margin-top: 20px;
+            grid-column: 1 / -1; /* Make results span full width */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="search-section">
+            <div class="search-container">
+                <div class="input-div">
+                    <input type="text" id="searchInput" placeholder="Enter search terms...">
+                    <button onclick="search()">
+                        <svg viewBox="0 0 24 24" width="16" height="16">
+                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" fill="none" stroke-width="2"/>
+                        </svg>
+                    </button>
+                </div>
+                <select id="searchType" onchange="updatePlaceholder()">
+                    <option value="forward">Forward Search</option>
+                    <option value="reverse">Reverse Search</option>
+                </select>
+            </div>
+        </div>
+        <div class="usage">
+            <h3>Usage</h3>
+            <h4>Forward Search</h4>
+            <p>Forward Search - Use characters separated by space Ex: a e b</p>
+            <h4>Reverse Search</h4>
+            <p>Reverse Search Use with space ex: son syll</p>
+        </div>
+        <div id="results">
+            <h2>Search Results</h2>
+            <h3>Input Characters:</h3>
+            <p>a b e</p>
+            <h3>Similar Properties:</h3>
+            <p>lab voi</p>
+        </div>
+    </div>
+
+    <script>
+        function updatePlaceholder() {
+            const input = document.getElementById('searchInput');
+            const searchType = document.getElementById('searchType').value;
+            input.placeholder = searchType === 'forward' ? 'a e b' : 'son syll';
+        }
+
+        function search() {
+            const searchInput = document.getElementById('searchInput').value;
+            const searchType = document.getElementById('searchType').value;
+
+            fetch('/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `compare_list=${searchInput}&search_type=${searchType}`
+            })
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('results').innerHTML = html;
+            });
+        }
+    </script>
+</body>
+</html>

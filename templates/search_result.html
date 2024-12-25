@@ -1,0 +1,50 @@
+<!-- templates/search_result.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .results {
+            margin-top: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .property {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="results">
+        <h2>Search Results</h2>
+
+        <div class="section">
+            <h3>Input Characters:</h3>
+            {% for char in return_data[0] %}
+                <span class="property">{{ char }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="section">
+            <h3>Similar Properties:</h3>
+            {% for prop in return_data[1] %}
+                <span class="property">{{ prop }}</span>
+            {% endfor %}
+        </div>
+
+        {% if return_data[2] %}
+        <div class="section">
+            <h3>Not Found:</h3>
+            {% for error in return_data[2] %}
+                <span class="property">{{ error }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
