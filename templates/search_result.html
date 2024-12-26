@@ -1,13 +1,16 @@
-<!-- templates/search_result.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <style>
         .results {
             margin-top: 20px;
+            font-family: Arial, sans-serif;
         }
         .section {
             margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
         }
         .property {
             display: inline-block;
@@ -17,25 +20,60 @@
             border-radius: 4px;
             background: white;
         }
+        .single-letter {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .property-item {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+        h2, h3 {
+            color: #333;
+        }
     </style>
 </head>
 <body>
     <div class="results">
         <h2>Search Results</h2>
 
-        <div class="section">
-            <h3>Input Characters:</h3>
-            {% for char in return_data[0] %}
-                <span class="property">{{ char }}</span>
-            {% endfor %}
-        </div>
+        {% if is_single_letter %}
+            <div class="section">
+                <div class="single-letter">
+                    Character: {{ return_data[0][0] }}
+                </div>
+                <h3>Properties:</h3>
+                <div class="properties-grid">
+                    {% for prop in return_data[1] %}
+                        <div class="property-item">{{ prop }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <div class="section">
+                <h3>Input Characters:</h3>
+                {% for char in return_data[0] %}
+                    <span class="property">{{ char }}</span>
+                {% endfor %}
+            </div>
 
-        <div class="section">
-            <h3>Similar Properties:</h3>
-            {% for prop in return_data[1] %}
-                <span class="property">{{ prop }}</span>
-            {% endfor %}
-        </div>
+            <div class="section">
+                <h3>Similar Properties:</h3>
+                {% for prop in return_data[1] %}
+                    <span class="property">{{ prop }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
 
         {% if return_data[2] %}
         <div class="section">
