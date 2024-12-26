@@ -4,9 +4,6 @@ import re
 
 app = Flask(__name__)
 
-# This will display all output and messages in different colors
-DO_COLOR = True
-
 
 class SearchCharacter():
 
@@ -48,18 +45,30 @@ class SearchCharacter():
 
     def search(self):
         return_data = []
+        is_single_letter = False  # Flag to indicate single input
+
         if not self.compare_list_database:
             # Send message if entered data does not exist
-            return return_data
+            return return_data, is_single_letter
+
+        # If only one element is searched
+        if len(self.compare_list) == 1:
+            is_single_letter = True
+            element = self.compare_list[0]
+            for row in self.compare_list_database:
+                if row[0] == element:
+                    return_data = [[row[0]], row[1:], self.error_data]
+                    break
         else:
-            # If entered data exists, find common between them
+            # If multiple elements are searched, find common properties
             char_list = [char.pop(0) for char in self.compare_list_database]
             temp = self.compare_list_database.copy()
             similar_props = self.get_common_from_multiple(
                 self.compare_list_database)
             return_data = [char_list, [
                 sp for sp in similar_props if sp != ''], self.error_data]
-            return return_data
+
+        return return_data, is_single_letter
 
     def reverse_search(self):
         return_data = []
@@ -86,15 +95,12 @@ class SearchCharacter():
 
 
 # Route to the home page of the app
-# Located in templates/index.html
 @app.route("/")
 def home():
     return render_template('index.html')
 
 
 # Route to handle search requests
-# The result templates are located in
-# templates/search_result.html and templates/reverse_search_result.html
 @app.route("/search", methods=['POST'])
 def search():
     compare_list = request.form['compare_list']
@@ -105,9 +111,9 @@ def search():
         compare_list = compare_list.split()
         search_obj = SearchCharacter(compare_list, 'symbols&properties.xlsx')  # Change to XLSX
         search_obj.get_database()
-        return_data = search_obj.search()
+        return_data, is_single_letter = search_obj.search()
 
-        return render_template('search_result.html', return_data=return_data)
+        return render_template('search_result.html', return_data=return_data, is_single_letter=is_single_letter)
 
     # Reverse search
     elif search_type == 'reverse':
